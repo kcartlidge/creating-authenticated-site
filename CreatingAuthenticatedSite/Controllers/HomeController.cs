@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CreatingAuthenticatedSite.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CreatingAuthenticatedSite.Controllers
 {
@@ -32,6 +33,12 @@ namespace CreatingAuthenticatedSite.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [Authorize()]
+        public IActionResult Dashboard()
+        {
+            return View();
         }
     }
 }

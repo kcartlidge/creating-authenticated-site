@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 
 namespace CreatingAuthenticatedSite
 {
@@ -23,6 +26,15 @@ namespace CreatingAuthenticatedSite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(o =>
+                {
+                    o.Cookie.HttpOnly = true;
+                    o.Cookie.SameSite = SameSiteMode.Strict;
+                    o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    o.ExpireTimeSpan = TimeSpan.FromMinutes(120);
+                    o.SlidingExpiration = true;
+                });
             services.AddControllersWithViews();
         }
 
@@ -39,6 +51,7 @@ namespace CreatingAuthenticatedSite
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
